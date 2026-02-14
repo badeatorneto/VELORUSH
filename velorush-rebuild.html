@@ -1,0 +1,2024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELORUSH - Rebuild Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@100;200;300;400;500;600;700;800;900&family=Audiowide&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00ffff;
+            --secondary: #ff2a6d;
+            --accent: #ffaa00;
+            --dark: #0a0e27;
+            --darker: #05070f;
+            --surface: #1a1f3a;
+            --text: #e0e6ff;
+            --success: #00ff88;
+            --danger: #ff3366;
+        }
+        
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0,255,255,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255,42,109,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255,170,0,0.02) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(0,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+            animation: gridMove 20s linear infinite;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Auth screens */
+        .auth-screen {
+            display: none;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .auth-screen.active {
+            display: flex;
+        }
+        
+        .auth-container {
+            background: linear-gradient(135deg, rgba(26,31,58,0.95) 0%, rgba(10,14,39,0.95) 100%);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 40px rgba(0,255,255,0.3), inset 0 0 40px rgba(0,255,255,0.05);
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .auth-logo {
+            font-family: 'Audiowide', cursive;
+            font-size: 4rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 2rem;
+            letter-spacing: 0.1em;
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 10px var(--primary)); }
+            50% { filter: drop-shadow(0 0 20px var(--secondary)); }
+        }
+        
+        .auth-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0,255,255,0.05);
+            border: 2px solid rgba(0,255,255,0.3);
+            color: var(--text);
+            font-size: 1rem;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+            background: rgba(0,255,255,0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            border: 2px solid var(--primary);
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,255,255,0.05));
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,255,0.1));
+            box-shadow: 0 0 20px rgba(0,255,255,0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: none;
+            border-color: rgba(255,255,255,0.3);
+            color: var(--text);
+            margin-top: 1rem;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+            box-shadow: 0 0 20px rgba(255,42,109,0.3);
+        }
+        
+        .auth-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .auth-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-link a:hover {
+            color: var(--secondary);
+            text-shadow: 0 0 10px var(--secondary);
+        }
+        
+        .error-message {
+            background: rgba(255,51,102,0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .success-message {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Main game UI */
+        .game-wrapper {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        .game-wrapper.active {
+            display: block;
+        }
+        
+        /* Header */
+        .game-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10,14,39,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .game-logo {
+            font-family: 'Audiowide', cursive;
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.1em;
+        }
+        
+        .player-info {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .stat-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+        }
+        
+        .stat-icon {
+            font-size: 1.2rem;
+        }
+        
+        .stat-value {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+        
+        .logout-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255,51,102,0.2);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,51,102,0.3);
+            box-shadow: 0 0 15px rgba(255,51,102,0.4);
+        }
+        
+        /* Main menu */
+        .main-menu {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem 2rem 2rem;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin-top: 3rem;
+        }
+        
+        .menu-card {
+            background: linear-gradient(135deg, rgba(26,31,58,0.6), rgba(10,14,39,0.6));
+            border: 2px solid var(--primary);
+            padding: 3rem 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+        }
+        
+        .menu-card:hover::before {
+            left: 100%;
+        }
+        
+        .menu-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 30px rgba(0,255,255,0.3);
+            transform: translateY(-10px);
+        }
+        
+        .menu-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .menu-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .menu-description {
+            text-align: center;
+            font-size: 0.95rem;
+            color: rgba(224,230,255,0.7);
+            line-height: 1.5;
+        }
+        
+        /* Game screens */
+        .game-screen {
+            display: none;
+            min-height: 100vh;
+            padding: 6rem 2rem 2rem;
+        }
+        
+        .game-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .screen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .screen-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+        
+        .back-button {
+            padding: 0.8rem 2rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .back-button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px rgba(0,255,255,0.3);
+        }
+        
+        /* Racing viewport */
+        .racing-viewport {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            aspect-ratio: 16/9;
+            background: linear-gradient(180deg, #1a0a2e 0%, #0a0612 100%);
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 40px rgba(0,255,255,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Enhanced road with perspective */
+        .road-system {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            perspective: 800px;
+            perspective-origin: 50% 100%;
+        }
+        
+        .road-surface {
+            position: absolute;
+            bottom: -50%;
+            left: 50%;
+            transform: translateX(-50%) rotateX(75deg);
+            width: 200%;
+            height: 400%;
+            background: 
+                linear-gradient(90deg, 
+                    transparent 0%, 
+                    transparent 44%, 
+                    var(--accent) 45%,
+                    var(--accent) 46%,
+                    transparent 47%,
+                    transparent 53%,
+                    var(--accent) 54%,
+                    var(--accent) 55%,
+                    transparent 56%,
+                    transparent 100%
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    #2a2a3e 0px,
+                    #2a2a3e 100px,
+                    #1a1a2e 100px,
+                    #1a1a2e 110px,
+                    transparent 110px,
+                    transparent 120px
+                );
+            transform-style: preserve-3d;
+        }
+        
+        .road-surface.moving {
+            animation: roadFlow 1.5s linear infinite;
+        }
+        
+        @keyframes roadFlow {
+            0% { transform: translateX(-50%) translateY(0) rotateX(75deg); }
+            100% { transform: translateX(-50%) translateY(120px) rotateX(75deg); }
+        }
+        
+        /* Enhanced player car */
+        .player-vehicle {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 240px;
+            transition: left 0.15s ease-out, transform 0.15s ease-out;
+            z-index: 100;
+        }
+        
+        .vehicle-chassis {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 50%, #ff6b35 100%);
+            clip-path: polygon(25% 0%, 75% 0%, 100% 25%, 100% 100%, 0% 100%, 0% 25%);
+            position: relative;
+            box-shadow: 0 15px 40px rgba(255,107,53,0.8);
+            filter: brightness(1.1);
+        }
+        
+        .vehicle-windshield {
+            position: absolute;
+            top: 8%;
+            left: 18%;
+            width: 64%;
+            height: 22%;
+            background: linear-gradient(180deg, rgba(0,217,255,0.4), rgba(0,217,255,0.2));
+            clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+            border: 1px solid rgba(0,255,255,0.5);
+        }
+        
+        .vehicle-headlights {
+            position: absolute;
+            bottom: 8%;
+            width: 35%;
+            height: 12px;
+            background: var(--primary);
+            box-shadow: 0 0 25px var(--primary), 0 0 50px var(--primary);
+        }
+        
+        .vehicle-headlights.left {
+            left: 8%;
+        }
+        
+        .vehicle-headlights.right {
+            right: 8%;
+        }
+        
+        .vehicle-spoiler {
+            position: absolute;
+            top: 15%;
+            left: 10%;
+            width: 80%;
+            height: 6px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        /* AI vehicles */
+        .ai-vehicle {
+            position: absolute;
+            width: 100px;
+            height: 180px;
+            transition: all 0.2s linear;
+            z-index: 50;
+        }
+        
+        .ai-vehicle .vehicle-chassis {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #00d4ff 100%);
+            box-shadow: 0 10px 30px rgba(0,212,255,0.6);
+        }
+        
+        /* HUD System */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 200;
+        }
+        
+        .speedometer {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: center;
+        }
+        
+        .speed-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--primary);
+            text-shadow: 0 0 30px var(--primary);
+            letter-spacing: -0.05em;
+        }
+        
+        .speed-unit {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.2em;
+            margin-top: 0.3rem;
+        }
+        
+        .position-indicator {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent);
+        }
+        
+        .lap-counter {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .race-timer {
+            position: absolute;
+            top: 120px;
+            right: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success);
+            text-shadow: 0 0 15px var(--success);
+        }
+        
+        .minimap-container {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            width: 200px;
+            height: 200px;
+            background: rgba(10,14,39,0.9);
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            padding: 1rem;
+        }
+        
+        .minimap-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+        
+        .minimap-location {
+            font-size: 0.85rem;
+            color: rgba(224,230,255,0.7);
+        }
+        
+        /* Race controls */
+        .race-controls {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .control-button {
+            padding: 1rem 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,255,255,0.05));
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .control-button:hover {
+            background: linear-gradient(135deg, rgba(0,255,255,0.2), rgba(0,255,255,0.1));
+            box-shadow: 0 0 25px rgba(0,255,255,0.4);
+            transform: translateY(-3px);
+        }
+        
+        .control-button.active {
+            background: linear-gradient(135deg, rgba(0,255,255,0.3), rgba(0,255,255,0.2));
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Garage */
+        .garage-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .garage-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(135deg, rgba(26,31,58,0.4), rgba(10,14,39,0.4));
+            border: 2px dashed var(--primary);
+            margin: 2rem 0;
+        }
+        
+        .empty-icon {
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        
+        .empty-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-description {
+            font-size: 1.1rem;
+            color: rgba(224,230,255,0.7);
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .vehicle-card {
+            background: linear-gradient(135deg, rgba(26,31,58,0.7), rgba(10,14,39,0.7));
+            border: 2px solid var(--primary);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vehicle-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(0,255,255,0.1));
+            transition: top 0.5s ease;
+        }
+        
+        .vehicle-card:hover::before {
+            top: 0;
+        }
+        
+        .vehicle-card:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 30px rgba(0,255,255,0.3);
+            transform: translateY(-5px);
+        }
+        
+        .vehicle-preview {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(0,255,255,0.2);
+        }
+        
+        .vehicle-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .vehicle-class {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .vehicle-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(224,230,255,0.6);
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-bar {
+            height: 6px;
+            background: rgba(0,255,255,0.2);
+            margin-top: 0.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 1s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+        
+        /* Tutorial */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(10,14,39,0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .tutorial-overlay.active {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tutorial-content {
+            max-width: 700px;
+            background: linear-gradient(135deg, rgba(26,31,58,0.95), rgba(10,14,39,0.95));
+            border: 3px solid var(--primary);
+            padding: 3rem;
+            box-shadow: 0 0 50px rgba(0,255,255,0.5);
+        }
+        
+        .tutorial-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        .tutorial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 2rem;
+        }
+        
+        .tutorial-controls {
+            background: rgba(0,255,255,0.05);
+            border: 1px solid var(--primary);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,255,255,0.2);
+        }
+        
+        .control-row:last-child {
+            border-bottom: none;
+        }
+        
+        .control-key {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+        
+        .control-action {
+            color: rgba(224,230,255,0.8);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .menu-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .player-info {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .screen-title {
+                font-size: 2rem;
+            }
+            
+            .vehicle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="auth-screen active">
+        <div class="auth-container">
+            <div class="auth-logo">VELORUSH</div>
+            <div class="auth-title">Login</div>
+            <div id="loginError" class="error-message" style="display: none;"></div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email or Username</label>
+                    <input type="text" class="form-input" id="loginIdentifier" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPassword" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn">Login</button>
+                <button type="button" class="btn btn-secondary" onclick="showSignup()">Create Account</button>
+            </form>
+            <div class="auth-link">
+                <a href="#" onclick="showPasswordReset(); return false;">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Screen -->
+    <div id="signupScreen" class="auth-screen">
+        <div class="auth-container">
+            <div class="auth-logo">VELORUSH</div>
+            <div class="auth-title">Create Account</div>
+            <div id="signupError" class="error-message" style="display: none;"></div>
+            <div id="signupSuccess" class="success-message" style="display: none;"></div>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="signupUsername" required minlength="3" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="signupEmail" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="signupPassword" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" id="signupConfirmPassword" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+                <button type="button" class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Reset Screen -->
+    <div id="resetScreen" class="auth-screen">
+        <div class="auth-container">
+            <div class="auth-logo">VELORUSH</div>
+            <div class="auth-title">Reset Password</div>
+            <div id="resetError" class="error-message" style="display: none;"></div>
+            <div id="resetSuccess" class="success-message" style="display: none;"></div>
+            <form id="resetForm" onsubmit="handlePasswordReset(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="resetEmail" required>
+                </div>
+                <button type="submit" class="btn">Send Reset Link</button>
+                <button type="button" class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Game -->
+    <div id="gameWrapper" class="game-wrapper">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="game-logo">VELORUSH</div>
+            <div class="player-info">
+                <div class="stat-display">
+                    <span class="stat-icon">👤</span>
+                    <span class="stat-value" id="playerUsername">Player</span>
+                </div>
+                <div class="stat-display">
+                    <span class="stat-icon">💰</span>
+                    <span class="stat-value" id="playerMoney">$0</span>
+                </div>
+                <div class="stat-display">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="playerLevel">LVL 1</span>
+                </div>
+                <div class="stat-display">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-value" id="playerWins">0</span>
+                </div>
+                <button class="logout-btn" onclick="handleLogout()">Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Menu -->
+        <div id="mainMenu" class="main-menu active">
+            <div class="container">
+                <div class="menu-grid">
+                    <div class="menu-card" onclick="showGameScreen('career')">
+                        <div class="menu-icon">🏁</div>
+                        <div class="menu-title">Career Mode</div>
+                        <div class="menu-description">Build your reputation through championships and unlock new events</div>
+                    </div>
+                    
+                    <div class="menu-card" onclick="showGameScreen('freeRoam')">
+                        <div class="menu-icon">🌴</div>
+                        <div class="menu-title">Free Roam</div>
+                        <div class="menu-description">Explore Los Angeles at your own pace and discover hidden locations</div>
+                    </div>
+                    
+                    <div class="menu-card" onclick="showGameScreen('multiplayer')">
+                        <div class="menu-icon">👥</div>
+                        <div class="menu-title">Multiplayer</div>
+                        <div class="menu-description">Race against players worldwide in ranked competitions</div>
+                    </div>
+                    
+                    <div class="menu-card" onclick="showGameScreen('garage')">
+                        <div class="menu-icon">🚗</div>
+                        <div class="menu-title">Garage</div>
+                        <div class="menu-description">Manage your vehicle collection and customize your rides</div>
+                    </div>
+                    
+                    <div class="menu-card" onclick="showGameScreen('dealership')">
+                        <div class="menu-icon">🏪</div>
+                        <div class="menu-title">Dealership</div>
+                        <div class="menu-description">Purchase new vehicles to expand your collection</div>
+                    </div>
+                    
+                    <div class="menu-card" onclick="showGameScreen('profile')">
+                        <div class="menu-icon">📊</div>
+                        <div class="menu-title">Profile</div>
+                        <div class="menu-description">View your stats, achievements, and racing history</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Career Mode Screen -->
+        <div id="careerScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Career Mode</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                <div id="careerContent">
+                    <div class="garage-empty">
+                        <div class="empty-icon">🏆</div>
+                        <div class="empty-title">Welcome to VELORUSH Career</div>
+                        <div class="empty-description">
+                            Complete tutorial races to earn your first credits and purchase your first vehicle.
+                            The streets of Los Angeles are waiting for you!
+                        </div>
+                        <button class="btn" style="max-width: 300px; margin: 0 auto;" onclick="startTutorial()">
+                            Start Tutorial Races
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Free Roam Screen -->
+        <div id="freeRoamScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Free Roam</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                
+                <div class="racing-viewport">
+                    <div class="road-system">
+                        <div class="road-surface" id="roadSurface"></div>
+                    </div>
+                    
+                    <div class="player-vehicle" id="playerVehicle">
+                        <div class="vehicle-chassis">
+                            <div class="vehicle-windshield"></div>
+                            <div class="vehicle-headlights left"></div>
+                            <div class="vehicle-headlights right"></div>
+                            <div class="vehicle-spoiler"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="aiVehiclesContainer"></div>
+                    
+                    <div class="hud-overlay">
+                        <div class="position-indicator" id="positionDisplay">1st</div>
+                        <div class="lap-counter">
+                            Lap <span id="currentLap">1</span> / <span id="totalLaps">3</span>
+                        </div>
+                        <div class="race-timer" id="raceTimer">00:00.000</div>
+                        <div class="speedometer">
+                            <div class="speed-number" id="speedDisplay">0</div>
+                            <div class="speed-unit">MPH</div>
+                        </div>
+                        <div class="minimap-container">
+                            <div class="minimap-title">📍 Location</div>
+                            <div class="minimap-location">Downtown LA</div>
+                            <div class="minimap-location" style="margin-top: 0.5rem; font-size: 0.75rem;">Pacific Coast Highway</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="race-controls">
+                    <button class="control-button" id="raceStartBtn" onclick="toggleRace()">Start Race</button>
+                    <button class="control-button" onclick="cycleCamera()">Camera: <span id="cameraMode">Chase</span></button>
+                    <button class="control-button" onclick="togglePhysicsMode()">Physics: <span id="physicsDisplay">Arcade</span></button>
+                    <button class="control-button" onclick="toggleAssists()">Assists: <span id="assistsDisplay">On</span></button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; font-size: 1.1rem; opacity: 0.8;">
+                    <p>🎮 Controls: <strong>W/↑</strong> Accelerate | <strong>S/↓</strong> Brake | <strong>A/D ← →</strong> Steer | <strong>Space</strong> Handbrake</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garage Screen -->
+        <div id="garageScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Garage</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                <div class="garage-content">
+                    <div id="garageVehicles" class="garage-empty">
+                        <div class="empty-icon">🚗</div>
+                        <div class="empty-title">Your Garage is Empty</div>
+                        <div class="empty-description">
+                            You don't own any vehicles yet. Complete tutorial races to earn credits,
+                            then visit the dealership to purchase your first car!
+                        </div>
+                        <button class="btn" style="max-width: 300px; margin: 0 auto;" onclick="showGameScreen('dealership')">
+                            Visit Dealership
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dealership Screen -->
+        <div id="dealershipScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Dealership</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                <div class="garage-content">
+                    <div class="vehicle-grid" id="dealershipInventory">
+                        <!-- Vehicles will be dynamically loaded -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Multiplayer Screen -->
+        <div id="multiplayerScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Multiplayer</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                <div class="garage-empty">
+                    <div class="empty-icon">🌐</div>
+                    <div class="empty-title">Multiplayer Coming Soon</div>
+                    <div class="empty-description">
+                        Race against players worldwide, join crews, and compete in ranked seasons.
+                        Online multiplayer will be available in the next update!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profileScreen" class="game-screen">
+            <div class="container">
+                <div class="screen-header">
+                    <h1 class="screen-title">Profile</h1>
+                    <button class="back-button" onclick="showMainMenu()">← Back</button>
+                </div>
+                <div id="profileContent">
+                    <!-- Profile stats will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay -->
+    <div id="tutorialOverlay" class="tutorial-overlay">
+        <div class="tutorial-content">
+            <div class="tutorial-title">Tutorial Race</div>
+            <div class="tutorial-text">
+                Welcome to VELORUSH! Complete this tutorial race to earn your first $5,000 and learn the basics of street racing in Los Angeles.
+            </div>
+            <div class="tutorial-controls">
+                <div class="control-row">
+                    <span class="control-key">W / ↑</span>
+                    <span class="control-action">Accelerate</span>
+                </div>
+                <div class="control-row">
+                    <span class="control-key">S / ↓</span>
+                    <span class="control-action">Brake / Reverse</span>
+                </div>
+                <div class="control-row">
+                    <span class="control-key">A D / ← →</span>
+                    <span class="control-action">Steer Left / Right</span>
+                </div>
+                <div class="control-row">
+                    <span class="control-key">Space</span>
+                    <span class="control-action">Handbrake</span>
+                </div>
+            </div>
+            <button class="btn" onclick="startRace()">Start Tutorial Race</button>
+            <button class="btn btn-secondary" onclick="closeTutorial()">Maybe Later</button>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // GAME STATE & DATA MANAGEMENT
+        // ========================================
+        
+        const GameState = {
+            currentUser: null,
+            isRacing: false,
+            currentSpeed: 0,
+            targetSpeed: 0,
+            playerPosition: 50,
+            currentLap: 1,
+            totalLaps: 3,
+            raceStartTime: null,
+            physicsMode: 'arcade',
+            assists: true,
+            cameraMode: 'chase',
+            tutorialCompleted: false
+        };
+        
+        // Simulated database (in production, this would be a real backend)
+        const Database = {
+            users: JSON.parse(localStorage.getItem('velorush_users') || '{}'),
+            
+            saveUser(user) {
+                this.users[user.email] = user;
+                localStorage.setItem('velorush_users', JSON.stringify(this.users));
+            },
+            
+            getUser(identifier) {
+                // Check by email
+                if (this.users[identifier]) {
+                    return this.users[identifier];
+                }
+                // Check by username
+                return Object.values(this.users).find(u => u.username.toLowerCase() === identifier.toLowerCase());
+            },
+            
+            userExists(email, username) {
+                return this.users[email] || Object.values(this.users).some(u => u.username.toLowerCase() === username.toLowerCase());
+            }
+        };
+        
+        // Vehicle catalog
+        const VehicleCatalog = [
+            {
+                id: 'civic_si',
+                name: 'Honda Civic Si',
+                class: 'Class C',
+                category: 'JDM',
+                price: 25000,
+                speed: 7.2,
+                acceleration: 7.5,
+                handling: 8.0,
+                braking: 7.8,
+                icon: '🚙'
+            },
+            {
+                id: 'mustang_gt',
+                name: 'Ford Mustang GT',
+                class: 'Class B',
+                category: 'Muscle',
+                price: 45000,
+                speed: 8.0,
+                acceleration: 8.5,
+                handling: 7.0,
+                braking: 7.5,
+                icon: '🏎️'
+            },
+            {
+                id: 'rx7',
+                name: 'Mazda RX-7',
+                class: 'Class A',
+                category: 'JDM',
+                price: 55000,
+                speed: 8.5,
+                acceleration: 8.2,
+                handling: 9.0,
+                braking: 8.5,
+                icon: '🏁'
+            },
+            {
+                id: 'supra_mk4',
+                name: 'Toyota Supra MK4',
+                class: 'Class A',
+                category: 'JDM Legend',
+                price: 65000,
+                speed: 8.7,
+                acceleration: 8.8,
+                handling: 8.5,
+                braking: 8.6,
+                icon: '🚗'
+            },
+            {
+                id: 'gtr_r35',
+                name: 'Nissan GT-R R35',
+                class: 'Class S1',
+                category: 'Supercar',
+                price: 110000,
+                speed: 9.2,
+                acceleration: 9.3,
+                handling: 9.0,
+                braking: 9.1,
+                icon: '🚀'
+            },
+            {
+                id: 'porsche_911',
+                name: 'Porsche 911 Turbo S',
+                class: 'Class S2',
+                category: 'Track Weapon',
+                price: 180000,
+                speed: 9.6,
+                acceleration: 9.8,
+                handling: 9.7,
+                braking: 9.8,
+                icon: '⚡'
+            }
+        ];
+        
+        // ========================================
+        // AUTHENTICATION SYSTEM
+        // ========================================
+        
+        function showLogin() {
+            hideAllScreens();
+            document.getElementById('loginScreen').classList.add('active');
+        }
+        
+        function showSignup() {
+            hideAllScreens();
+            document.getElementById('signupScreen').classList.add('active');
+        }
+        
+        function showPasswordReset() {
+            hideAllScreens();
+            document.getElementById('resetScreen').classList.add('active');
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll('.auth-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            const user = Database.getUser(identifier);
+            
+            if (!user) {
+                showError(errorDiv, 'Account not found. Please check your credentials.');
+                return;
+            }
+            
+            // Simple password check (in production, use proper hashing)
+            if (user.password !== btoa(password)) {
+                showError(errorDiv, 'Incorrect password. Please try again.');
+                return;
+            }
+            
+            // Successful login
+            GameState.currentUser = user;
+            loadGame();
+        }
+        
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('signupUsername').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const errorDiv = document.getElementById('signupError');
+            const successDiv = document.getElementById('signupSuccess');
+            
+            // Validation
+            if (password !== confirmPassword) {
+                showError(errorDiv, 'Passwords do not match.');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError(errorDiv, 'Password must be at least 6 characters long.');
+                return;
+            }
+            
+            if (Database.userExists(email, username)) {
+                showError(errorDiv, 'An account with this email or username already exists.');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                username: username,
+                email: email,
+                password: btoa(password), // Simple encoding (use proper hashing in production)
+                money: 0,
+                level: 1,
+                xp: 0,
+                wins: 0,
+                races: 0,
+                vehicles: [],
+                achievements: [],
+                reputation: 0,
+                createdAt: new Date().toISOString()
+            };
+            
+            Database.saveUser(newUser);
+            
+            // Show success message
+            showSuccess(successDiv, 'Account created successfully! You can now login.');
+            document.getElementById('signupForm').reset();
+            
+            setTimeout(() => {
+                showLogin();
+            }, 2000);
+        }
+        
+        function handlePasswordReset(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('resetEmail').value.trim().toLowerCase();
+            const errorDiv = document.getElementById('resetError');
+            const successDiv = document.getElementById('resetSuccess');
+            
+            const user = Database.getUser(email);
+            
+            if (!user) {
+                showError(errorDiv, 'No account found with this email address.');
+                return;
+            }
+            
+            // Simulate sending reset email
+            showSuccess(successDiv, 'Password reset link sent to your email! (Demo: Check console for password)');
+            console.log('Password reset for:', email, 'Current password:', atob(user.password));
+            
+            setTimeout(() => {
+                showLogin();
+            }, 3000);
+        }
+        
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                GameState.currentUser = null;
+                showLogin();
+                document.getElementById('gameWrapper').classList.remove('active');
+            }
+        }
+        
+        function showError(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        function showSuccess(element, message) {
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+        
+        // ========================================
+        // GAME INITIALIZATION
+        // ========================================
+        
+        function loadGame() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('gameWrapper').classList.add('active');
+            
+            updatePlayerStats();
+            loadGarage();
+            loadDealership();
+            
+            // Show tutorial if first time
+            if (GameState.currentUser.money === 0 && GameState.currentUser.vehicles.length === 0) {
+                setTimeout(() => {
+                    document.getElementById('tutorialOverlay').classList.add('active');
+                }, 500);
+            }
+        }
+        
+        function updatePlayerStats() {
+            const user = GameState.currentUser;
+            document.getElementById('playerUsername').textContent = user.username;
+            document.getElementById('playerMoney').textContent = '$' + user.money.toLocaleString();
+            document.getElementById('playerLevel').textContent = 'LVL ' + user.level;
+            document.getElementById('playerWins').textContent = user.wins;
+        }
+        
+        function saveProgress() {
+            if (GameState.currentUser) {
+                Database.saveUser(GameState.currentUser);
+                updatePlayerStats();
+            }
+        }
+        
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        
+        function showMainMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('mainMenu').classList.add('active');
+            
+            if (GameState.isRacing) {
+                toggleRace();
+            }
+        }
+        
+        function showGameScreen(screenName) {
+            document.getElementById('mainMenu').classList.remove('active');
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            const screenId = screenName + 'Screen';
+            const screen = document.getElementById(screenId);
+            if (screen) {
+                screen.classList.add('active');
+            }
+        }
+        
+        // ========================================
+        // GARAGE SYSTEM
+        // ========================================
+        
+        function loadGarage() {
+            const container = document.getElementById('garageVehicles');
+            const user = GameState.currentUser;
+            
+            if (user.vehicles.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-icon">🚗</div>
+                    <div class="empty-title">Your Garage is Empty</div>
+                    <div class="empty-description">
+                        You don't own any vehicles yet. Complete tutorial races to earn credits,
+                        then visit the dealership to purchase your first car!
+                    </div>
+                    <button class="btn" style="max-width: 300px; margin: 0 auto;" onclick="showGameScreen('dealership')">
+                        Visit Dealership
+                    </button>
+                `;
+                return;
+            }
+            
+            container.className = 'vehicle-grid';
+            container.innerHTML = '';
+            
+            user.vehicles.forEach(vehicleId => {
+                const vehicle = VehicleCatalog.find(v => v.id === vehicleId);
+                if (vehicle) {
+                    container.innerHTML += createVehicleCard(vehicle, true);
+                }
+            });
+        }
+        
+        function loadDealership() {
+            const container = document.getElementById('dealershipInventory');
+            container.innerHTML = '';
+            
+            VehicleCatalog.forEach(vehicle => {
+                const owned = GameState.currentUser.vehicles.includes(vehicle.id);
+                container.innerHTML += createVehicleCard(vehicle, false, owned);
+            });
+        }
+        
+        function createVehicleCard(vehicle, isGarage, isOwned = false) {
+            return `
+                <div class="vehicle-card" ${!isGarage && !isOwned ? `onclick="purchaseVehicle('${vehicle.id}')"` : ''}>
+                    <div class="vehicle-preview">${vehicle.icon}</div>
+                    <div class="vehicle-name">${vehicle.name}</div>
+                    <div class="vehicle-class">${vehicle.class} • ${vehicle.category}</div>
+                    ${!isGarage ? `<div style="font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--accent); margin-bottom: 1rem; font-weight: 700;">
+                        ${isOwned ? 'OWNED' : '$' + vehicle.price.toLocaleString()}
+                    </div>` : ''}
+                    <div class="vehicle-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Speed</span>
+                            <span class="stat-value">${vehicle.speed.toFixed(1)}</span>
+                            <div class="stat-bar"><div class="stat-progress" style="width: ${vehicle.speed * 10}%"></div></div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Acceleration</span>
+                            <span class="stat-value">${vehicle.acceleration.toFixed(1)}</span>
+                            <div class="stat-bar"><div class="stat-progress" style="width: ${vehicle.acceleration * 10}%"></div></div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Handling</span>
+                            <span class="stat-value">${vehicle.handling.toFixed(1)}</span>
+                            <div class="stat-bar"><div class="stat-progress" style="width: ${vehicle.handling * 10}%"></div></div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Braking</span>
+                            <span class="stat-value">${vehicle.braking.toFixed(1)}</span>
+                            <div class="stat-bar"><div class="stat-progress" style="width: ${vehicle.braking * 10}%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function purchaseVehicle(vehicleId) {
+            const vehicle = VehicleCatalog.find(v => v.id === vehicleId);
+            const user = GameState.currentUser;
+            
+            if (user.vehicles.includes(vehicleId)) {
+                alert('You already own this vehicle!');
+                return;
+            }
+            
+            if (user.money < vehicle.price) {
+                alert(`Insufficient funds! You need $${vehicle.price.toLocaleString()} but only have $${user.money.toLocaleString()}.`);
+                return;
+            }
+            
+            if (confirm(`Purchase ${vehicle.name} for $${vehicle.price.toLocaleString()}?`)) {
+                user.money -= vehicle.price;
+                user.vehicles.push(vehicleId);
+                saveProgress();
+                loadGarage();
+                loadDealership();
+                alert(`Congratulations! ${vehicle.name} has been added to your garage!`);
+            }
+        }
+        
+        // ========================================
+        // RACING PHYSICS ENGINE
+        // ========================================
+        
+        let physicsInterval = null;
+        let aiVehicles = [];
+        
+        function toggleRace() {
+            GameState.isRacing = !GameState.isRacing;
+            const btn = document.getElementById('raceStartBtn');
+            const road = document.getElementById('roadSurface');
+            
+            if (GameState.isRacing) {
+                btn.textContent = 'Stop Race';
+                btn.classList.add('active');
+                road.classList.add('moving');
+                GameState.raceStartTime = Date.now();
+                startPhysicsEngine();
+                spawnAIVehicles();
+                updateRaceTimer();
+            } else {
+                btn.textContent = 'Start Race';
+                btn.classList.remove('active');
+                road.classList.remove('moving');
+                stopPhysicsEngine();
+                clearAIVehicles();
+            }
+        }
+        
+        function startPhysicsEngine() {
+            GameState.targetSpeed = GameState.physicsMode === 'arcade' ? 180 : 150;
+            
+            physicsInterval = setInterval(() => {
+                if (!GameState.isRacing) return;
+                
+                // Smooth acceleration with physics
+                const accelRate = GameState.assists ? 3 : 2;
+                if (GameState.currentSpeed < GameState.targetSpeed) {
+                    GameState.currentSpeed += accelRate;
+                }
+                
+                // Update display
+                document.getElementById('speedDisplay').textContent = Math.floor(GameState.currentSpeed);
+                
+                // Update road animation speed
+                const road = document.getElementById('roadSurface');
+                const duration = Math.max(0.5, 2 - (GameState.currentSpeed / GameState.targetSpeed) * 1.5);
+                road.style.animationDuration = duration + 's';
+            }, 50);
+        }
+        
+        function stopPhysicsEngine() {
+            if (physicsInterval) {
+                clearInterval(physicsInterval);
+                physicsInterval = null;
+            }
+            GameState.currentSpeed = 0;
+            GameState.targetSpeed = 0;
+            document.getElementById('speedDisplay').textContent = '0';
+        }
+        
+        function updateRaceTimer() {
+            if (!GameState.isRacing) return;
+            
+            const elapsed = Date.now() - GameState.raceStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            const milliseconds = elapsed % 1000;
+            
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds.toString().padStart(3, '0')}`;
+            document.getElementById('raceTimer').textContent = timeString;
+            
+            requestAnimationFrame(updateRaceTimer);
+        }
+        
+        function spawnAIVehicles() {
+            const container = document.getElementById('aiVehiclesContainer');
+            container.innerHTML = '';
+            aiVehicles = [];
+            
+            for (let i = 0; i < 4; i++) {
+                const ai = document.createElement('div');
+                ai.className = 'ai-vehicle';
+                ai.style.top = (10 + i * 12) + '%';
+                ai.style.left = (35 + Math.random() * 30) + '%';
+                ai.innerHTML = `
+                    <div class="vehicle-chassis">
+                        <div class="vehicle-windshield"></div>
+                        <div class="vehicle-headlights left"></div>
+                        <div class="vehicle-headlights right"></div>
+                        <div class="vehicle-spoiler"></div>
+                    </div>
+                `;
+                container.appendChild(ai);
+                aiVehicles.push(ai);
+                animateAIVehicle(ai);
+            }
+        }
+        
+        function animateAIVehicle(vehicle) {
+            const interval = setInterval(() => {
+                if (!GameState.isRacing) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                let currentTop = parseFloat(vehicle.style.top);
+                currentTop += 0.8;
+                
+                if (currentTop > 105) {
+                    currentTop = -15;
+                    vehicle.style.left = (35 + Math.random() * 30) + '%';
+                }
+                
+                vehicle.style.top = currentTop + '%';
+            }, 40);
+        }
+        
+        function clearAIVehicles() {
+            document.getElementById('aiVehiclesContainer').innerHTML = '';
+            aiVehicles = [];
+        }
+        
+        // ========================================
+        // VEHICLE CONTROLS
+        // ========================================
+        
+        let keys = {};
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            
+            if (!GameState.isRacing) return;
+            
+            const vehicle = document.getElementById('playerVehicle');
+            const currentLeft = parseFloat(vehicle.style.left || '50');
+            
+            // Steering
+            if (keys['a'] || keys['arrowleft']) {
+                if (currentLeft > 25) {
+                    vehicle.style.left = (currentLeft - 1.5) + '%';
+                    vehicle.style.transform = 'translateX(-50%) rotateZ(-3deg)';
+                }
+            }
+            
+            if (keys['d'] || keys['arrowright']) {
+                if (currentLeft < 75) {
+                    vehicle.style.left = (currentLeft + 1.5) + '%';
+                    vehicle.style.transform = 'translateX(-50%) rotateZ(3deg)';
+                }
+            }
+            
+            // Acceleration
+            if (keys['w'] || keys['arrowup']) {
+                if (GameState.currentSpeed < GameState.targetSpeed + 20) {
+                    GameState.currentSpeed += 4;
+                }
+            }
+            
+            // Braking
+            if (keys['s'] || keys['arrowdown'] || keys[' ']) {
+                if (GameState.currentSpeed > 0) {
+                    GameState.currentSpeed -= 8;
+                    document.getElementById('speedDisplay').textContent = Math.floor(Math.max(0, GameState.currentSpeed));
+                }
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+            
+            if (!GameState.isRacing) return;
+            
+            const vehicle = document.getElementById('playerVehicle');
+            
+            if (!keys['a'] && !keys['arrowleft'] && !keys['d'] && !keys['arrowright']) {
+                vehicle.style.transform = 'translateX(-50%) rotateZ(0deg)';
+            }
+        });
+        
+        // ========================================
+        // GAME SETTINGS
+        // ========================================
+        
+        function cycleCamera() {
+            const modes = ['Chase', 'Hood', 'Cockpit', 'Cinematic'];
+            const currentIndex = modes.indexOf(GameState.cameraMode);
+            const nextIndex = (currentIndex + 1) % modes.length;
+            GameState.cameraMode = modes[nextIndex];
+            document.getElementById('cameraMode').textContent = GameState.cameraMode;
+        }
+        
+        function togglePhysicsMode() {
+            GameState.physicsMode = GameState.physicsMode === 'arcade' ? 'simulation' : 'arcade';
+            document.getElementById('physicsDisplay').textContent = 
+                GameState.physicsMode.charAt(0).toUpperCase() + GameState.physicsMode.slice(1);
+        }
+        
+        function toggleAssists() {
+            GameState.assists = !GameState.assists;
+            document.getElementById('assistsDisplay').textContent = GameState.assists ? 'On' : 'Off';
+        }
+        
+        // ========================================
+        // TUTORIAL SYSTEM
+        // ========================================
+        
+        function startTutorial() {
+            document.getElementById('tutorialOverlay').classList.add('active');
+        }
+        
+        function startRace() {
+            document.getElementById('tutorialOverlay').classList.remove('active');
+            showGameScreen('freeRoam');
+            
+            setTimeout(() => {
+                toggleRace();
+                
+                // Simulate completing tutorial after 30 seconds
+                setTimeout(() => {
+                    if (GameState.isRacing) {
+                        toggleRace();
+                    }
+                    
+                    completeTutorial();
+                }, 30000);
+            }, 500);
+        }
+        
+        function completeTutorial() {
+            if (GameState.currentUser.money > 0) return; // Already completed
+            
+            GameState.currentUser.money = 5000;
+            GameState.currentUser.races = 1;
+            GameState.currentUser.xp = 100;
+            saveProgress();
+            
+            alert('🏆 Tutorial Complete!\n\nYou earned $5,000!\nVisit the dealership to purchase your first vehicle.');
+            
+            loadGarage();
+            loadDealership();
+        }
+        
+        function closeTutorial() {
+            document.getElementById('tutorialOverlay').classList.remove('active');
+        }
+        
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            // Check if user is already logged in (for demo purposes)
+            const lastUser = localStorage.getItem('velorush_last_user');
+            if (lastUser) {
+                const user = Database.getUser(lastUser);
+                if (user) {
+                    GameState.currentUser = user;
+                    loadGame();
+                }
+            }
+        });
+        
+        // Save last user on logout
+        window.addEventListener('beforeunload', () => {
+            if (GameState.currentUser) {
+                localStorage.setItem('velorush_last_user', GameState.currentUser.email);
+            }
+        });
+    </script>
+</body>
+</html>
